@@ -1,0 +1,75 @@
+%input signal
+Fs = 48000; %sampling frequency
+t = 0:1/Fs:3;
+
+%function for linear gain
+LinGain = @(X, gain) X*gain;
+
+%function to generate signal
+%f = frequency, A = max ampl, phi = phase in degrees
+makeSignal = @(f, A, phi) A*sin(2*pi*f*t + degtorad(phi));
+X1 = makeSignal(80, 0.2, 0);
+X2 = makeSignal(2500, 0.2, 0);
+X3 = makeSignal(20000, 0.2, 0);
+scale = 7.2e4;
+X = X1 + X2 + X3;
+%X = X3 + X1;
+
+Xa = LinGain(X, 3);
+
+%function for bandpass filtering
+%BPassFilter(X, N, F3dB1, F3dB2, Fs)
+%X = input signal, N = order, Fs = sampling freq
+F3dB1 = 800;
+F3dB2 = 7200;
+Xb = BPassFilter(Xa, 2, F3dB1, F3dB2, Fs);
+
+Xc = LinGain(Xa, 6);
+
+%compressor curve points:
+px = [-90 -82.35 -75.29 -30.36 6];
+py = [-113 -113 -99.84 -7.36 -4.44];
+px_knee = [-40 -35 -30 -25 -20 -15 -10];
+py_knee = [-28 -20 -13 -10 -9 -8 -7];
+
+%function for audio compression. 
+%Compressor(X, px, py, softKnee, px_knee,py_knee)
+%px, py = pts along compression curve
+%pxy_knee = graduated pts along threshold pt for soft knee
+[Xd, Xd_dB, Yd_dB] = Compressor(Xb, px, py, 0, px_knee, py_knee);
+
+figure;
+plot(Xd_dB, Yd_dB, '.')
+
+figure;
+%plot a fft of a function, X is input signal
+subplot(511);
+plot(linspace(-Fs/2, Fs/2, length(X)), fftshift(abs(fft(X)))/scale);
+xlabel('f/Hz');
+ylabel('Input signal');
+a = axis;
+
+subplot(512);
+plot(linspace(-Fs/2, Fs/2, length(Xa)), fftshift(abs(fft(Xa)))/scale);
+xlabel('f/Hz');
+ylabel('Gain=3');
+%axis(a);
+
+subplot(513);
+plot(linspace(-Fs/2, Fs/2, length(Xb)), fftshift(abs(fft(Xb)))/scale);
+xlabel('f/Hz');
+ylabel('Bandpass filter');
+%axis(a);
+
+subplot(514);
+plot(linspace(-Fs/2, Fs/2, length(Xc)), fftshift(abs(fft(Xc)))/scale);
+xlabel('f/Hz');
+ylabel('Gain=6');
+%axis(a);
+
+subplot(515);
+plot(linspace(-Fs/2, Fs/2, length(Xd)), fftshift(abs(fft(Xd)))/scale);
+%plot(t, Xd);
+xlabel('f/Hz');
+ylabel('Compressed');
+%axis(a);

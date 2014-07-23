@@ -47,7 +47,7 @@ Xd = Compressor(Xc, px, py, 1, px_knee, py_knee);
 
 
 Fc = 500000;
-tfine = 1:1/Fc:5;
+tfine = 0:1/Fc:5;
 Xfine = interp1(t,Xd,tfine,'spline');
 X0 = zeros(1,length(tfine));
 %plot(t, X);
@@ -55,12 +55,14 @@ X0 = zeros(1,length(tfine));
 %pulse width modulation
 %fit_sawtooth(t, t_offset, frequency, lower_bound, upper_bound)
 %generates sawtooth wave with given parameters
+Fswth = 40000;
+t_off = 0;
 fit_sawtooth = @(t, t_off, f, lb, ub) sawtooth(2*pi*f*(t-t_off))*(ub+lb)/2 + (ub+lb)/2;
-swth = fit_sawtooth(tfine, 0, 40000, 0, 3);
+swth = fit_sawtooth(tfine, t_off, Fswth, 0, 3);
 
 %pwm(input, sawtooth, max_amplidue, Vdc)
 %Vdc is offset voltage added on to input
-Xe = pwm(X0, swth, 4.73, 0);
+Xe = pwm(X0, swth, 4.73, 0, tfine, t_off, Fswth, Fc);
 %Xf = pwm(X, swth, 4.73, 1);
 
 
@@ -81,3 +83,5 @@ Xe = pwm(X0, swth, 4.73, 0);
 %plot(t, Xc, t, Xd);
 %subplot(313)
 plot(tfine, swth, tfine, Xe, tfine, X0 + 0)
+
+

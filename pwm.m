@@ -3,17 +3,13 @@
 %swth = sawtooth wave to be used as comparator
 %Vdc = offset V added on to input sig
 
-function [Y] = pwm(X, swth, high, Vdc, fsig, fswth)
+function [Y] = pwm(X, swth, high, Vdc)
 n = length(X);
 Y = high*ones(n, 1);
 
 for i=1:n;
-    t = (i-1)/fsig;
-    i_swth = 1 + round(t*fswth);
-        
-    if swth(i_swth) < abs(X(i)+Vdc)
+    if (swth(i) < X(i)+Vdc)||(X(i) + Vdc < 0)
         Y(i) = 0;
     end
-        
 end
 end

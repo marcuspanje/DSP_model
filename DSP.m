@@ -62,7 +62,7 @@ swth = fit_sawtooth(tfine, t_off, Fswth, 0, 3);
 
 %pwm(input, sawtooth, max_amplidue, Vdc)
 %Vdc is offset voltage added on to input
-Xe = pwm(X0, swth, 4.73, 0, tfine, t_off, Fswth, Fc);
+Xe = pwm(X0, swth, 4.73, 0, Fswth, Fc);
 %Xf = pwm(X, swth, 4.73, 1);
 
 

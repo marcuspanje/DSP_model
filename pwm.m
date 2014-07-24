@@ -7,20 +7,18 @@
 %dead time control (DTC) prevents output from being constantly 
 %by setting a maximum duty cycle
  
-function [Y] = pwm(X, swth, high, Vdc, t, t_off, f, Fs)
+function [Y] = pwm(X, swth, high, Vdc, f, Fs)
 n = length(X);
 Y = zeros(n, 1);
-max_Dc = 90; % maximum duty cycle for DTC - dead time control
-max_high_t = max_Dc/(100*f);
-max_high_i = max_high_t*Fs;
-i_off = t_off * Fs;
-i_period = Fs/f;
+max_dc = 80; % maximum duty cycle for DTC - dead time control
+max_high_t = max_dc/(100*f);
+max_high_i = round(max_high_t*Fs);
 high_count = 0;
 stay_low = 0; %switch to stay low till end of period
 
 for i=1:n
-    %get start of period to keep track of DTC
-    if rem(i-1-i_off, i_period) == 0
+    %get start of period and reset switches for DTC
+    if (i > 1) && (swth(i) < swth(i-1)) 
         high_count = 0;
         stay_low = 0;
     end

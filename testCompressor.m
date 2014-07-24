@@ -8,11 +8,13 @@ fname = 'testCompressor2.xlsx';
 arr = xlsread(fname);
 Vin = arr(:, 1);
 Vout_exp = arr(:, 2);
-Vout_theory = Compressor(Vin, px, py, 1, px_knee, py_knee);
+[Vout_theory, X_dB, Y_dB] = Compressor(Vin, px, py, 1, px_knee, py_knee);
 
 figure
 plot(Vin, Vout_exp, 'b', Vin, Vout_theory, 'r');
-legend('data', 'theory');
+legend('experimental data', 'model');
 xlabel('Vin/V');
 ylabel('Vout/V');
 
+figure
+plot(X_dB, Y_dB);

@@ -1,17 +1,14 @@
-%pulse width modulation duty cycle range: 0 - max_Dc %
+%pulse width modulation with duty cycle range: 0 - max_Dc %
 %X = input sig to be modulated
 %swth = sawtooth wave to be used as comparator
 %Vdc = offset V added on to input sig
-%t_offset is time, f is freq of pulse wave,
-%Fs is samplin frequency
-%dead time control (DTC) prevents output from being constantly 
-%by setting a maximum duty cycle
+%f=freq of pulse wave, Fs=samplin freq, max_dc=max duty cycle [0, 1]
+%max_dc provides dead time control (DTC) by preventing 100% duty cycle. 
  
-function [Y] = pwm(X, swth, high, Vdc, f, Fs)
+function [Y] = pwm(X, swth, high, Vdc, f, Fs, max_dc)
 n = length(X);
 Y = zeros(n, 1);
-max_dc = 80; % maximum duty cycle for DTC - dead time control
-max_high_t = max_dc/(100*f);
+max_high_t = max_dc/f;
 max_high_i = round(max_high_t*Fs);
 high_count = 0;
 stay_low = 0; %switch to stay low till end of period

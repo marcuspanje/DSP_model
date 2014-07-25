@@ -19,17 +19,13 @@ Y = zeros(n, 1);
 max_Dc = 50; % maximum duty cycle for dead time control
 max_high_t = max_Dc/(100*f);
 max_high_i = round(max_high_t*Fc);
-i_off = round(t_off * Fc);
-i_period = round(Fc/f);
 high_count = 0;
 stay_low = 0;
 for i=1:n;
    %get start of a period
-    if (i > 1) 
-        if swth(i) < swth(i-1)
-            high_count = 0;
-            stay_low = 0;
-        end
+    if (i > 1) && (swth(i) < swth(i-1)) 
+        high_count = 0;
+        stay_low = 0;
     end
 
     %condition for high

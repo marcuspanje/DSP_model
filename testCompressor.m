@@ -12,9 +12,11 @@ Vout_exp = arr(:, 2);
 
 figure
 plot(Vin, Vout_exp, 'b', Vin, Vout_theory, 'r');
-legend('experimental data', 'model');
-xlabel('Vin/V');
-ylabel('Vout/V');
+leg = legend('ADAU 1701', 'MATLAB model');
+set(leg, 'fontsize', 15);
+set(gca, 'fontsize', 15);
+xlabel('Vin/V', 'fontsize', 15);
+ylabel('Vout/V', 'fontsize', 15);
 
 figure
 plot(X_dB, Y_dB);

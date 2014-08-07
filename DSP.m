@@ -7,9 +7,6 @@ t = 0:1/Fs:5;
 n = length(t);
 X = X(1:n, 1);
 
-
-%plot(t,X,'o',tfine,Xfine,'.');
-
 %function for linear gain
 LinGain = @(X, gain) X*gain;
 
@@ -45,12 +42,10 @@ py_knee = [-28 -20 -13 -10 -9 -8 -7];
 %pxy_knee = graduated pts along threshold pt for soft knee
 Xcompress = Compressor(Xgain2, px, py, 1, px_knee, py_knee);
 
-
-Fc = 500000;
+Fc = 300000;
 tfine = 0:1/Fc:5;
 Xfine = interp1(t,Xcompress,tfine,'spline');
-X0 = zeros(1,length(tfine));
-%plot(t, X);
+%X0 = zeros(1,length(tfine));
 
 %pulse width modulation
 %fit_sawtooth(t, t_offset, frequency, lower_bound, upper_bound)
@@ -62,7 +57,11 @@ swth = fit_sawtooth(tfine, t_off, Fswth, 0, 3);
 
 %pwm(input, sawtooth, high, Vdc, fout, Fs, max_dutycycle)
 %Vdc is offset voltage added on to input
-Vdc = 0;
-Xpwm = pwm(X0, swth, 4.73, Vdc, Fswth, Fc, 0.5);
+Vdc = 1.5;
+Xpwm = pwm(Xfine, swth, 4.73, Vdc, Fswth, Fc, 0.8);
 
-plot(tfine, swth, tfine, Xpwm, tfine, X0+Vdc);
+plot(tfine, swth, tfine, Xpwm, tfine, Xfine+Vdc);
+xlabel('Time/s', 'fontsize', 15);
+ylabel('Voltage/V', 'fontsize', 15);
+title('PWM', 'fontsize', 15);
+set(gca, 'fontsize', 15);

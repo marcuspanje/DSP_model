@@ -1,18 +1,23 @@
 %top level control for signal processing simulation
 
 %input signal
-[X, Fs] = wavread('siren.wav');
+%[X, Fs] = wavread('siren.wav');
 
+Fs = 48000;
 t = 0:1/Fs:5;
 n = length(t);
-X = X(1:n, 1);
-
-%function for linear gain
-LinGain = @(X, gain) X*gain;
+%X = X(1:n, 1);
 
 %function to generate signal
 %f = frequency, A = max ampl, phi = phase in degrees
 makeSignal = @(f, A, phi) A*sin(2*pi*f*t + degtorad(phi));
+X = makeSignal(1000, 0.1, 0);
+
+
+
+%function for linear gain
+LinGain = @(X, gain) X*gain;
+
 %X1 = makeSignal(80, 1, 90);
 %X2 = makeSignal(2500, 0.1, 0);
 %X3 = makeSignal(20000, 1, 0);

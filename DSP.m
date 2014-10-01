@@ -4,7 +4,8 @@
 %[X, Fs] = wavread('siren.wav');
 
 Fs = 48000;
-t = 0:1/Fs:5;
+endtime = 5;
+t = 0:1/Fs:endtime;
 n = length(t);
 %X = X(1:n, 1);
 
@@ -48,7 +49,7 @@ py_knee = [-28 -20 -13 -10 -9 -8 -7];
 Xcompress = Compressor(Xgain2, px, py, 1, px_knee, py_knee);
 
 Fc = 300000;
-tfine = 0:1/Fc:5;
+tfine = 0:1/Fc:endtime;
 Xfine = interp1(t,Xcompress,tfine,'spline');
 %X0 = zeros(1,length(tfine));
 

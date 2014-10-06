@@ -2,9 +2,11 @@
 
 %function to generate signal
 %f = frequency, A = max ampl, phi = phase in degrees
-[X, Fs] = wavread('siren.wav');
+[X, Fs] = audioread('siren.wav');
+%T = 0.125 s %signal period
 endtime = 3;
 %Fs = 48000;
+%Fs = round(1.07*realFs);
 t = 0:1/Fs:endtime;
 X = X(1:numel(t));
 makeSignal = @(f, A, phi) A*sin(2*pi*f*t + degtorad(phi));
@@ -34,12 +36,32 @@ Vdc = 2.5;
 Xpwm = pwm(Xfine, swth, 5.0, Vdc, Fswth, Fs_fine, 0.9);
 
 %analyze pwm
-n = 30000;
+n = 60000;
 [dc, startT, endLo, endT, T] = getTInfo_lo(n, tfine, Xpwm);
 plot(tfine, swth, tfine, Xpwm, t, X + Vdc);
 xlabel('Time/s', 'fontsize', 15);
 ylabel('Voltage/V', 'fontsize', 15);
 title('PWM', 'fontsize', 15);
 set(gca, 'fontsize', 15);
+
+%scale to get 1 period, and from 0 to 400
+startPeriod = 6500;
+endPeriod = 11500;
+dc_scaled = dc(startPeriod:endPeriod);
+dc_scaled = round(dc_scaled*400);
+n_dc_scaled = numel(dc_scaled);
+
 figure;
-plot(1:n, dc);
+plot(1:n_dc_scaled, dc_scaled);
+
+%write points to file
+file = fopen('dc_data', 'w');
+fprintf(file, '%s', '{');
+for i = 1:n_dc_scaled-1
+    fprintf(file, '%d, ', dc_scaled(i));
+    if mod(i, 10) == 0
+        fprintf(file, '%s\n', '');
+    end
+end
+fprintf(file, '%d}', dc_scaled(n_dc_scaled));
+fclose(file);

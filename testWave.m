@@ -44,10 +44,16 @@ ylabel('Voltage/V', 'fontsize', 15);
 title('PWM', 'fontsize', 15);
 set(gca, 'fontsize', 15);
 
+%get dc_data
+startPeriod_t = 0.5468;
+endPeriod_t = 0.9016;
+period_t = endPeriod_t - startPeriod_t;
+period_i = round(period_t*40000);
+
 %scale to get 1 period, and from 0 to 400
-startPeriod = 6500;
-endPeriod = 11500;
-dc_scaled = dc(startPeriod:endPeriod);
+startPeriod_i = 6500; %after period of time with no signal
+endPeriod_i = startPeriod_i + period_i;
+dc_scaled = dc(startPeriod_i:endPeriod_i);
 dc_scaled = round(dc_scaled*400);
 n_dc_scaled = numel(dc_scaled);
 
